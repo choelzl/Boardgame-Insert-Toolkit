@@ -9,13 +9,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: DeterminateSystems/nix-installer-action@main
-      with:
-        nix_path: pkgs=channel:nixos-unstable
     - uses: DeterminateSystems/magic-nix-cache-action@main
-
-    - name: Install OpenSCAD Nightly
-      run: |
-        nix-env -iA openscad-unstable
+    - run: nix-channel --update
+    - run: nix-env -iA openscad-unstable
     
     - name: Generate STL and PNG
       run: |

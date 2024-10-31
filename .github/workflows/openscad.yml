@@ -8,7 +8,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Install OpenSCAD
       run: sudo apt-get install -y openscad
@@ -21,7 +21,7 @@ jobs:
         openscad -o output/example/model.png --imgsize=1024,768 examples.2.scad
 
     - name: Upload STL and PNG
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: OpenSCAD Outputs
         path: output/

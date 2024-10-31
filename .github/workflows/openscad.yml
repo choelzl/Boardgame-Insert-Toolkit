@@ -22,7 +22,7 @@ jobs:
       with:
         path: openscad/build
         key: ${{ runner.os }}-openscad-build-${{ env.version }}
-        restore-keys: ${{ runner.os }}-openscad-build-
+        restore-keys: ${{ runner.os }}-openscad-build-${{ env.version }}
 
     - name: Install dependencies
       run: sudo openscad/scripts/uni-get-dependencies.sh

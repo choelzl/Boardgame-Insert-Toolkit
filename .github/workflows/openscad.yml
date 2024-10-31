@@ -26,7 +26,7 @@ jobs:
 
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
-      run: sudo ./scripts/uni-get-dependencies.sh
+      run: sudo openscad/scripts/uni-get-dependencies.sh
 
     - name: Build OpenSCAD
       if: steps.cache.outputs.cache-hit != 'true'

@@ -18,7 +18,7 @@ jobs:
         mkdir -p output
         mkdir -p output/example
         openscad -o output/example/model.stl examples.2.scad
-        openscad -o output/example/model.png --imgsize=1024,768 --projection=o --autocenter --viewall examples.2.scad
+        #openscad -o output/example/model.png --imgsize=1024,768 --projection=o --autocenter --viewall examples.2.scad
 
     - name: Upload STL and PNG
       uses: actions/upload-artifact@v4

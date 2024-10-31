@@ -7,37 +7,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Get OpenSCAD version
-      id: openscad-version
-      run: |
-        git clone --recursive https://github.com/openscad/openscad.git
-        cd openscad
-        echo "version=$(git rev-parse HEAD)" >> $GITHUB_ENV
-
-    - name: Cache OpenSCAD build
-      uses: actions/cache@v3
+    - uses: actions/checkout@v4
+    - uses: DeterminateSystems/nix-installer-action@main
       with:
-        path: openscad/build
-        key: ${{ runner.os }}-openscad-build-${{ env.version }}
-        restore-keys: ${{ runner.os }}-openscad-build-${{ env.version }}
+        nix_path: nixpkgs=channel:nixos-unstable
+    - uses: DeterminateSystems/magic-nix-cache-action@main
 
-    - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: sudo openscad/scripts/uni-get-dependencies.sh
-
-    - name: Build OpenSCAD
-      if: steps.cache.outputs.cache-hit != 'true'
+    - name: Install OpenSCAD Nightly
       run: |
-        cd openscad
-        mkdir build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DEXPERIMENTAL=ON -DSNAPSHOT=ON -DCMAKE_UNITY_BUILD=OFF -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
-        make -j$(nproc)
-        sudo make install
-
+        nix-env -iA nixpkgs.openscad-nightly
+    
     - name: Generate STL and PNG
       run: |
         mkdir -p output
@@ -46,12 +25,6 @@ jobs:
         #openscad --backend=manifold -o output/example/model.stl examples.2.scad
         openscad --backend=manifold --render -o output/example/model_top.png --imgsize=2048,2048 --projection=o --camera=0,0,100,0,0,0,1 --autocenter --viewall examples.2.scad
         openscad --backend=manifold --render -o output/example/model_iso.png --imgsize=2048,2048 --projection=o --camera=50,50,50,55,0,25,1 --autocenter --viewall examples.2.scad
-
-    # - name: Zip output
-    #   run: |
-    #     for dir in output/*/; do
-    #       zip -r "${dir%/}.zip" "$dir"
-    #     done
 
     - name: Upload STL and PNG
       uses: actions/upload-artifact@v4

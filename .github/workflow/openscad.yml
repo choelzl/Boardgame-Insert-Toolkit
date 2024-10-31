@@ -1,0 +1,27 @@
+name: Generate
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install OpenSCAD
+      run: sudo apt-get install -y openscad
+
+    - name: Generate STL and PNG
+      run: |
+        mkdir -p output
+        mkdir -p output/example
+        openscad -o output/example/model.stl examples.2.scad
+        openscad -o output/example/model.png --imgsize=1024,768 examples.2.scad
+
+    - name: Upload STL and PNG
+      uses: actions/upload-artifact@v2
+      with:
+        name: OpenSCAD Outputs
+        path: output/

@@ -15,7 +15,7 @@ jobs:
       with:
         primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
         restore-prefixes-first-match: nix-${{ runner.os }}-
-    - run: nix profile install nixpkgs#openscad-unstable
+    - run: nix profile install nixpkgs#openscad-unstable nixpkgs#xorg.xvfb
     
     - name: Generate STL and PNG
       run: |

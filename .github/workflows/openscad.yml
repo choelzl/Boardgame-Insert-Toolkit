@@ -15,19 +15,18 @@ jobs:
       run: |
         git clone https://github.com/openscad/openscad.git
         cd openscad
-        echo "version=$(git describe --tags)" >> $GITHUB_ENV
+        echo "version=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
     - name: Cache OpenSCAD build
       uses: actions/cache@v3
       with:
         path: openscad/build
-        key: ${{ runner.os }}-openscad-build-${{ env.version }}-${{ hashFiles('**/main') }}
-        restore-keys: |
-          ${{ runner.os }}-openscad-build-
+        key: ${{ runner.os }}-openscad-build-${{ env.version }}
+        restore-keys: ${{ runner.os }}-openscad-build-${{ env.version }}
 
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
-      run: sudo apt-get update && sudo apt-get install -y cmake g++ libboost-all-dev libeigen3-dev libgmp-dev libopencsg-dev libdouble-conversion-dev libharfbuzz-dev libmpfr-dev libqt5opengl5-dev libqt5webkit5-dev libqt5xmlpatterns5-dev libqscintilla2-qt5-dev libqscintilla2-qt5-dev libqt5svg5-dev libzip-dev
+      run: sudo apt-get update && sudo apt-get install -y cmake g++ libboost-all-dev libeigen3-dev libgmp-dev libglew-dev libopencsg-dev libdouble-conversion-dev libharfbuzz-dev libmpfr-dev libqt5opengl5-dev libqt5webkit5-dev libqt5xmlpatterns5-dev libqscintilla2-qt5-dev libqscintilla2-qt5-dev libqt5svg5-dev libzip-dev
 
 
     - name: Build OpenSCAD

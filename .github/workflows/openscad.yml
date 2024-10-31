@@ -25,8 +25,8 @@ jobs:
         mkdir -p output/example
         Xvfb :99 & export DISPLAY=:99
         #openscad -o output/example/model.stl examples.2.scad
-        openscad -o output/example/model_top.png --imgsize=2048,2048 --projection=o --camera=0,0,100,0,0,0,1 --autocenter --viewall examples.2.scad
-        openscad -o output/example/model_iso.png --imgsize=2048,2048 --projection=o --camera=50,50,50,55,0,25,1 --autocenter --viewall examples.2.scad
+        openscad --render -o output/example/model_top.png --imgsize=2048,2048 --projection=o --camera=0,0,100,0,0,0,1 --autocenter --viewall examples.2.scad
+        openscad --render -o output/example/model_iso.png --imgsize=2048,2048 --projection=o --camera=50,50,50,55,0,25,1 --autocenter --viewall examples.2.scad
 
     # - name: Zip output
     #   run: |

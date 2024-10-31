@@ -15,7 +15,7 @@ jobs:
 
     - name: Install OpenSCAD Nightly
       run: |
-        nix-env -iA pkgs.openscad-unstable
+        nix-env -iA openscad-unstable
     
     - name: Generate STL and PNG
       run: |

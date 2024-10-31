@@ -25,14 +25,12 @@ jobs:
         restore-keys: ${{ runner.os }}-openscad-build-
 
     - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
       run: sudo openscad/scripts/uni-get-dependencies.sh
 
     - name: Build OpenSCAD
-      if: steps.cache.outputs.cache-hit != 'true'
       run: |
         cd openscad
-        mkdir build
+        mkdir -p build
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DEXPERIMENTAL=ON -DSNAPSHOT=ON -DCMAKE_UNITY_BUILD=OFF -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
         make -j$(nproc)

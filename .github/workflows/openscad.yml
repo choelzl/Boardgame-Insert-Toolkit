@@ -34,7 +34,7 @@ jobs:
         cd openscad
         mkdir build
         cd build
-        cmake -S .. -B build -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo 
+        cmake .. -B build -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo 
         make -j$(nproc)
         sudo make install
 

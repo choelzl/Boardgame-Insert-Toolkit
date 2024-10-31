@@ -17,6 +17,7 @@ jobs:
       run: |
         mkdir -p output
         mkdir -p output/example
+        Xvfb :99 & export DISPLAY=:99
         #openscad -o output/example/model.stl examples.2.scad
         openscad -o output/example/model.png --imgsize=1024,768 --projection=o --autocenter --viewall examples.2.scad
 

@@ -9,24 +9,45 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Cache
-      uses: actions/cache@v4.1.2
-      with:
-        path: output/
-        key: ${{ runner.os }}-openscad-output-${{ hashFiles('**/*.scad') }}
-        restore-keys: ${{ runner.os }}-openscad-output-${{ hashFiles('**/*.scad') }}
 
-    - name: Install OpenSCAD
-      run: sudo apt-get install -y openscad
+    - name: Get OpenSCAD version
+      id: openscad-version
+      run: |
+        git clone https://github.com/openscad/openscad.git
+        cd openscad
+        echo "version=$(git describe --tags)" >> $GITHUB_ENV
+
+    - name: Cache OpenSCAD build
+      uses: actions/cache@v3
+      with:
+        path: openscad/build
+        key: ${{ runner.os }}-openscad-build-${{ env.version }}-${{ hashFiles('**/main') }}
+        restore-keys: |
+          ${{ runner.os }}-openscad-build-
+
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: sudo apt-get update && sudo apt-get install -y cmake g++ libboost-all-dev libeigen3-dev libgmp-dev libmpfr-dev libqt5opengl5-dev libqt5webkit5-dev libqt5xmlpatterns5-dev libqscintilla2-qt5-dev libqscintilla2-dev libqt5svg5-dev libzip-dev
+
+
+    - name: Build OpenSCAD
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        cd openscad
+        mkdir build
+        cd build
+        cmake ..
+        make -j$(nproc)
+        sudo make install
 
     - name: Generate STL and PNG
       run: |
         mkdir -p output
         mkdir -p output/example
         Xvfb :99 & export DISPLAY=:99
-        #openscad -o output/example/model.stl examples.2.scad
-        openscad --render -o output/example/model_top.png --imgsize=2048,2048 --projection=o --camera=0,0,100,0,0,0,1 --autocenter --viewall examples.2.scad
-        openscad --render -o output/example/model_iso.png --imgsize=2048,2048 --projection=o --camera=50,50,50,55,0,25,1 --autocenter --viewall examples.2.scad
+        #openscad --backend=manifold -o output/example/model.stl examples.2.scad
+        openscad --backend=manifold --render -o output/example/model_top.png --imgsize=2048,2048 --projection=o --camera=0,0,100,0,0,0,1 --autocenter --viewall examples.2.scad
+        openscad --backend=manifold --render -o output/example/model_iso.png --imgsize=2048,2048 --projection=o --camera=50,50,50,55,0,25,1 --autocenter --viewall examples.2.scad
 
     # - name: Zip output
     #   run: |

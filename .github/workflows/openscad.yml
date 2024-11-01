@@ -16,7 +16,7 @@ jobs:
         path: |
           openscad/build
           /usr/loca/bin/openscad
-        key: ${{ runner.os }}-openscad-build-${{ hashFiles('**/main') }}
+        key: ${{ runner.os }}-openscad-build-${{ date +'%Y.%V' }}
         restore-keys: |
           ${{ runner.os }}-openscad-build-
         

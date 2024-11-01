@@ -13,23 +13,25 @@ jobs:
     - name: Get OpenSCAD version
       id: openscad-version
       run: |
-        git clone --recursive https://github.com/openscad/openscad.git
         cd openscad
         echo "version=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
     - name: Cache OpenSCAD build
       uses: actions/cache@v3
       with:
-        path: openscad/build
-        key: ${{ runner.os }}-openscad-build-${{ env.version }}
-        restore-keys: ${{ runner.os }}-openscad-build-${{ env.version }}
-
-    - name: Install dependencies
-      run: sudo openscad/scripts/uni-get-dependencies.sh
-
+        path: |
+          openscad/build
+          /usr/loca/bin/openscad
+        key: ${{ runner.os }}-openscad-build-${{ hashFiles('**/main') }}
+        restore-keys: |
+          ${{ runner.os }}-openscad-build-
+        
     - name: Build OpenSCAD
+      if: steps.cache.outputs.cache-hit != 'true'
       run: |
+        git clone --recursive https://github.com/openscad/openscad.git
         cd openscad
+        sudo scripts/uni-get-dependencies.sh
         mkdir -p build
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DEXPERIMENTAL=ON -DSNAPSHOT=ON -DCMAKE_UNITY_BUILD=OFF -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON

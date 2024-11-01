@@ -16,18 +16,22 @@ jobs:
       with:
         path: |
           openscad
-          /usr/local/bin
-          /usr/local/lib
+          /usr/local/bin/openscad
+          /usr/local/lib/openscad
         key: ${{ runner.os }}-openscad-build-${{ env.date_key }}
         restore-keys: |
           ${{ runner.os }}-openscad-build-
-        
+    
+    - name: Get OpenSCAD
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: git clone --recursive https://github.com/openscad/openscad.git
+    - name: Dependencies OpenSCAD
+      run: cd openscad && sudo scripts/uni-get-dependencies.sh
+      
     - name: Build OpenSCAD
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
-        git clone --recursive https://github.com/openscad/openscad.git
         cd openscad
-        sudo scripts/uni-get-dependencies.sh
         mkdir -p build
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DEXPERIMENTAL=ON -DSNAPSHOT=ON -DCMAKE_UNITY_BUILD=OFF -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON

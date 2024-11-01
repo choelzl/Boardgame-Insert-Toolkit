@@ -12,6 +12,7 @@ jobs:
     - run: echo "date_key=$(date +'%Y.%V')" >> $GITHUB_ENV
     
     - uses: actions/cache@v3
+      id: cache
       with:
         path: |
           openscad/build

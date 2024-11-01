@@ -15,9 +15,9 @@ jobs:
       id: cache
       with:
         path: |
-          openscad/build
-          /usr/local/bin/openscad
-          /usr/local/lib/openscad
+          openscad
+          /usr/local/bin
+          /usr/local/lib
         key: ${{ runner.os }}-openscad-build-${{ env.date_key }}
         restore-keys: |
           ${{ runner.os }}-openscad-build-

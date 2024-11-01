@@ -10,12 +10,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Get OpenSCAD version
-      id: openscad-version
-      run: |
-        cd openscad
-        echo "version=$(git rev-parse HEAD)" >> $GITHUB_ENV
-
     - name: Cache OpenSCAD build
       uses: actions/cache@v3
       with:

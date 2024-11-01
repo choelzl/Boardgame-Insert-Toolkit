@@ -7,16 +7,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Cache OpenSCAD build
-      uses: actions/cache@v3
+    - uses: actions/checkout@v4
+      
+    - run: echo "date_key=$(date +'%Y.%V')" >> $GITHUB_ENV
+    
+    - uses: actions/cache@v3
       with:
         path: |
           openscad/build
           /usr/loca/bin/openscad
-        key: ${{ runner.os }}-openscad-build-$(date +'%Y.%V')
+        key: ${{ runner.os }}-openscad-build-${{ env.date_key }}
         restore-keys: |
           ${{ runner.os }}-openscad-build-
         
@@ -47,8 +47,7 @@ jobs:
     #       zip -r "${dir%/}.zip" "$dir"
     #     done
 
-    - name: Upload STL and PNG
-      uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4
       with:
         name: Outputs
         path: output/*

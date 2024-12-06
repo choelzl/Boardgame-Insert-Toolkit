@@ -1,0 +1,18 @@
+if(m_lid_is_inverted_fill){
+                                        theta = 45;
+
+                                        x = __lid_external_size(k_x);
+                                        y = __lid_external_size(k_y);
+
+                                        x2 = y * sin(theta) + x * cos(theta);
+                                        y2 = y * cos(theta) + x * sin(theta);
+                                    intersection()
+                                    {
+                                        translate([ x / 2 - x2 / 2, y / 2 - y2 / 2, 0 ])
+                                            RotateAboutPoint(theta, [ 0, 0, 1 ], [ x2 / 2, y2 / 2, 0 ])
+                                                MakeStripedGrid(x = x2, y = y2, w = m_lid_stripe_width,
+                                                                dx = m_lid_stripe_space, dy = 0, depth_ratio = 0.5,thickness = m_lid_thickness);
+                                        MakeAllLidLabels();
+                                      }
+                                    
+                                  }

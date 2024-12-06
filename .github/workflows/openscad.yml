@@ -1,0 +1,59 @@
+name: Generate
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      
+    - run: echo "date_key=$(date +'%Y.%V')" >> $GITHUB_ENV
+    
+    - uses: actions/cache@v3
+      id: cache
+      with:
+        path: |
+          openscad
+          /usr/local/bin/openscad
+          /usr/local/lib/openscad
+        key: ${{ runner.os }}-openscad-build-${{ env.date_key }}
+        restore-keys: |
+          ${{ runner.os }}-openscad-build-
+    
+    - name: Get OpenSCAD
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: git clone --recursive https://github.com/openscad/openscad.git
+    - name: Dependencies OpenSCAD
+      run: cd openscad && sudo scripts/uni-get-dependencies.sh
+      
+    - name: Build OpenSCAD
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        cd openscad
+        mkdir -p build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DEXPERIMENTAL=ON -DSNAPSHOT=ON -DCMAKE_UNITY_BUILD=OFF -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
+        make -j$(nproc)
+        sudo make install
+
+    - name: Generate STL and PNG
+      run: |
+        mkdir -p output
+        mkdir -p output/example
+        Xvfb :99 & export DISPLAY=:99
+        #openscad --backend=manifold -o output/example/model.stl examples.2.scad
+        openscad --backend=manifold --render -o output/example/model_top.png --imgsize=2048,2048 --projection=o --camera=0,0,100,0,0,0,1 --autocenter --viewall examples.2.scad
+        openscad --backend=manifold --render -o output/example/model_iso.png --imgsize=2048,2048 --projection=o --camera=50,50,50,55,0,25,1 --autocenter --viewall examples.2.scad
+
+    # - name: Zip output
+    #   run: |
+    #     for dir in output/*/; do
+    #       zip -r "${dir%/}.zip" "$dir"
+    #     done
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Outputs
+        path: output/*

@@ -9,22 +9,24 @@ module edge(r, h){
     };
 };
 
-module box_outer(r,h,w){
-    w=w-2*r;
+module box_outer(r,h,wx,wy){
+    wx=wx-2*r;
+    wy=wy-2*r;
     translate([r,r,r]) hull(){
         translate([0 ,0 ,0]) edge(r,h);
-        translate([w,0 ,0]) edge(r,h);
-        translate([0 ,w,0]) edge(r,h);
-        translate([w,w,0]) edge(r,h);
+        translate([wx,0 ,0]) edge(r,h);
+        translate([0 ,wy,0]) edge(r,h);
+        translate([wx,wy,0]) edge(r,h);
     };
 };
 
-module box(r,h,w){
-    t = 0.5;
+module box(h,dim){
+    r = 5;
+    t = 1;
     difference(){
-        box_outer(r,h,w);
-        translate([t,t,t]) box_outer(r-t,h+t,w-t*2);
+        box_outer(r,h,m_d*dim[0],m_d*dim[1]);
+        translate([t,t,t]) box_outer(r-t,h+t,m_d*dim[0]-t*2, m_d*dim[1]-t*2);
     };
 };
 
-box(5,5,m_d);
+box(20,[2,1]);
